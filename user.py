@@ -23,23 +23,22 @@ class User(NetworkNode):
     """
     Handle user actions and data
     """
-    def __init__(self, mode: str, target: str, username: str, savefile: str):
+    def __init__(self, target: str, username: str, savefile: str):
         """
         mode- establish, link, configure
         target- ip address, LATER session id
         username- name to use for session
         savefile- file to save correspondence to
         """
-        self.mode: str = mode # only for launching
         self.target: str = target # another peer...
         self.username: str = username
         self.savefile: str | bool = savefile
 
         self._key_prv = Ed25519PrivateKey.generate()
-        self.key_pub = Ed25519PrivateKey.public_key(self._key_prv)
+        self.key_pub = self._key_prv.public_key()
 
-        def __str__(self):
-            return str(self.mode + self.target + self.username + self.savefile)
+    def __str__(self):
+        return str(self.target) + str(self.username) + str(self.savefile)
 
     #TODOS: username check and filename check. rest in the future
     def validate(self) -> None:
@@ -107,20 +106,9 @@ class User(NetworkNode):
             raise ValueError("Savefile must be a string or empty, bro idk how u got this error tbh")
 
     def _validate_target(self) -> None:
-        if self.mode == "link":
-            if not self.target:
-                raise ValueError("Target must be provided in link mode.")
-            else:
-                ... # todo ping node of `target`
-            # todo later check if target exists
-        elif self.mode == "establish":
-            if self.target:
-                raise ValueError("Target must not be provided in establish mode.")
-            else:
-                # todo generate session id from Session
-                self.target = ""
-        else:
-            raise ValueError("Unknown mode.")
+        if self.target:
+            # todo ping
+            ...
 
     def _validate_keys(self) -> None:
         data = urandom(32)
