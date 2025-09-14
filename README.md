@@ -34,8 +34,9 @@ options:
 
 ### TODOs:
 
-1.  Implement CLI arg to keep registerated peer hex even after connection, for others to join (defaults to False)
+1.  Implement CLI arg to keep registered peer hex even after connection, for others to join (defaults to False)
 2.  Host server using cloud services
+3. file saving option- save all correspondence
 
 ### Development Status:
 

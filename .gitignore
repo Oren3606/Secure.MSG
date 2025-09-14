@@ -1,4 +1,6 @@
 .idea/
+.vscode/
+.ropeproject/
 Secure.MSG.iml
 venv/
 __pycache__/

@@ -1,68 +1,36 @@
-from argparse import *
-from genericpath import *
-from os import *
-from pathlib import *
-from typing import *
-from conn_mgr import *
+"""
+Pass arguments from terminal emulator for launch
 
-def is_registered(name:str):
-    return False # temp
-
-def add_end(name:str, check:Callable) -> str:
-    tmp = name
-    i = 1
-    while check(tmp):
-        tmp = name + str(i)
-        i += 1
-    
-    return tmp
+Usage:
+secmsg [e | l | c] [options]
+more info with `secmsg -h`
+"""
+from argparse import ArgumentParser
 
 parser = ArgumentParser(
     prog="Secure.MSG",
-    usage="secmsg [establish | link] [options]",
+    usage="secmsg [establish | link | configure] [options]",
     epilog="Secure.MSG is a secure messaging platform",
-    description="Secure decentralized messaging platform",
+    description="Secure decentralized messaging platform"
 )
 
-parser.add_argument("connection", type=str, help="Connection method", choices=["establish", "link"], default='establish', required=True)
-parser.add_argument("--target", "-t", type=str, help="target peer")
-parser.add_argument("--name", "-n", type=str, help="Username", default="Peer")
-parser.add_argument("--file", "-f", type=str, help="file path", default="")
-parser.add_argument("--port", "-p", type=int, nargs=2, help="Port to use, 0 for auto", default=0)
-parser.add_argument("--observe", "-o", action="store_true", help="Wehther to only observe non-interactively")
+parser.add_argument("mode",
+                    choices=["establish", "e", "link", "l", "configure", "c"],
+                    help="Mode of operation")
 
-args = parser.parse_args()
+parser.add_argument("target",
+                    nargs="?",
+                    type=str,
+                    help="Target for connecting to a session")
 
-user_name = add_end(args.name, is_registered)
+parser.add_argument("--username", "-u",
+                    type=str,
+                    help="Username for session")
 
-filename = args.file
-if path.exists(filename):
-    if path.isfile(filename):
-        filename = add_end(filename, isfile) # todo handle extension
-    if path.isdir(args.file):
-        filename = add_end(filename + "secmsg_session", isfile)
-     
-if args.port == 0:
-        args.port = 13456 # todo auto
+parser.add_argument("--savefile", "-s",
+                    nargs="?",
+                    const=True,
+                    type=str,
+                    help="File for saving session. Leave empty for automatic name")
 
-observe = args.observe
-
-addr_ip = args.target
-print("addr ip", addr_ip)
-
-if args.connection == "establish":
-    print("Establish selected")
-    #temp
-    args.target = "127.0.0.1"
-    print(f"Name: {args.name}")
-    print(f"File path: {args.file}")
-
-    addr= (args.target, args.port)
-    establish((args.target, args.port))
-
-
-elif args.connection == "link":
-    print(f"Link selected with target: {args.target}")
-    print(f"Name: {args.name}")
-    print(f"File path: {args.file}")
-    link((args.target, args.port))
+cli_args = parser.parse_args()
